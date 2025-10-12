@@ -25,4 +25,8 @@ public class TaskEntity {
     private LocalDateTime dueDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 }
