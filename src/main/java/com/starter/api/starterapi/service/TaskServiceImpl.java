@@ -1,10 +1,12 @@
 package com.starter.api.starterapi.service;
 
+import com.starter.api.starterapi.mapper.TaskMapper;
 import com.starter.api.starterapi.model.TaskDto;
 import com.starter.api.starterapi.model.TaskEntity;
 import com.starter.api.starterapi.repository.TaskRepository;
 import com.starter.api.starterapi.repository.UserRepository;
 import com.starter.api.starterapi.util.Status;
+import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final TaskMapper taskMapper;
 
     @Override
     public Mono<TaskDto> saveTasks(TaskDto taskDto) {
@@ -41,5 +44,20 @@ public class TaskServiceImpl implements TaskService {
                         entity.getCreatedAt(),
                         entity.getUpdatedAt(),
                         entity.getId()));
+    }
+
+    @Override
+    public Mono<TaskDto> updateTask(Long idTask, String status) {
+        var task = taskRepository.findById(idTask)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (task.getStatus().equals(Status.COMPLETE.toString()) && !status.equals(Status.CANCELLED.toString())) {
+            throw new IllegalStateException("Completed tasks can only be cancelled");
+        }
+
+        task.setStatus(status);
+
+        return Mono.fromCallable(() -> taskRepository.save(task))
+                .map(taskMapper::toApi);
     }
 }

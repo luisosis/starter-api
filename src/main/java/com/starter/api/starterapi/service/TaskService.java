@@ -6,4 +6,6 @@ import reactor.core.publisher.Mono;
 public interface TaskService {
 
     Mono<TaskDto> saveTasks(TaskDto taskDto);
+
+    Mono<TaskDto> updateTask(Long idTask, String status);
 }

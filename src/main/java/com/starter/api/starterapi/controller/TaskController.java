@@ -20,9 +20,9 @@ public class TaskController {
         return taskService.saveTasks(taskDto);
     }
 
-    @PutMapping
-    public Mono<TaskDto> update(@RequestBody TaskDto taskDto) {
+    @PutMapping("/{id}/status")
+    public Mono<TaskDto> update(@PathVariable Long id, @RequestParam String status) {
 
-        return null;
+        return taskService.updateTask(id, status);
     }
 }
